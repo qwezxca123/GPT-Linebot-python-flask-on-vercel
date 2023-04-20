@@ -42,7 +42,7 @@ def handle_message(event):
         image_url = line_bot_api.get_message_content(event.message.id).content_url
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}")
+            TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}"))
         return
 )
 
