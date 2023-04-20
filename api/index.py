@@ -39,11 +39,9 @@ def handle_message(event):
 
 @line_handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
-    image_url = line_bot_api.get_message_content(event.message.id).content_url
     line_bot_api.reply_message(
         event.reply_token, [
-            TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}"),
-            ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)
+            TextSendMessage(text="收到"),
         ])
     
 if __name__ == "__main__":
