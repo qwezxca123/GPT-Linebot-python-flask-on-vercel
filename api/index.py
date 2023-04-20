@@ -37,6 +37,9 @@ def handle_message(event):
             TextSendMessage(text="請輸入一張圖片"))
         return
     else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=event.message.type))
         image_url = line_bot_api.get_message_content(event.message.id).content_url
         line_bot_api.reply_message(
             event.reply_token,
