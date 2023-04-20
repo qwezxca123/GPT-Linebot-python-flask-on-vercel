@@ -35,6 +35,10 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="請輸入一張圖片"))
+    elif event.message.type != "text":
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="333"))
     elif event.message.type == "image":
         line_bot_api.reply_message(
             event.reply_token,
