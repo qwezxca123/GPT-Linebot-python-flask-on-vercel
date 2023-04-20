@@ -28,13 +28,13 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-
+    
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     if event.message.type != "image":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="請輸入一張圖片030"))
+            TextSendMessage(text="請輸入一張圖片"))
         return
     else:
         line_bot_api.reply_message(
