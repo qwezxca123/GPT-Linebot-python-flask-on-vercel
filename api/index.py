@@ -36,15 +36,13 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="請輸入一張圖片"))
         return
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.type))
-        image_url = line_bot_api.get_message_content(event.message.id).content_url
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="321"))
-        return
+    
+@line_handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    image_url = line_bot_api.get_message_content(event.message.id).content_url
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}"))
     
 if __name__ == "__main__":
     app.run()
