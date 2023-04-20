@@ -41,6 +41,9 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}"))
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="123"))
         return
     
 if __name__ == "__main__":
