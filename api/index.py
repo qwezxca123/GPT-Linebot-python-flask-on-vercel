@@ -7,7 +7,6 @@ import os
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
-working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
 
 app = Flask(__name__)
 
@@ -34,21 +33,10 @@ def callback():
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global working_status
-    if event.message.type != "text":
-        return
-
-    if event.message.text == "說話":
-        working_status = True
+    if event.message.type != "image":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
-        return
-
-    if event.message.text == "閉嘴":
-        working_status = False
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="好的，我乖乖閉嘴 > <，如果想要我繼續說話，請跟我說 「說話」 > <"))
+            TextSendMessage(text="請輸入一張圖片"))
         return
 
 if __name__ == "__main__":
