@@ -29,10 +29,8 @@ def callback():
         abort(400)
     return 'OK'
 
-
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global working_status
     if event.message.type != "image":
         line_bot_api.reply_message(
             event.reply_token,
@@ -44,7 +42,6 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=f"您所上傳的圖片的URL為：{image_url}"))
         return
-)
-
+    
 if __name__ == "__main__":
     app.run()
