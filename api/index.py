@@ -31,14 +31,10 @@ def callback():
     
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="請輸入一張圖片"))
-    
-    if event.message.text == "image":
+    if event.message.text == "嗨":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="image"))
+            TextSendMessage(text="請輸入一張圖片"))
         return
 
 @line_handler.add(MessageEvent, message=ImageMessage)
