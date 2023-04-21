@@ -40,10 +40,14 @@ def handle_message(event):
 def handle_image(event):
     message_content = line_bot_api.get_message_content(event.message.id)
     image = message_content.content
+    image_url = 'https://example.com/image.jpg'
+    preview_url = 'https://example.com/preview.jpg'
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="收到圖片"),
-            ImageSendMessage(image=image)
+            ImageSendMessage(image=image,
+                original_content_url=image_url,
+                preview_image_url=preview_url)
         ])
     
 if __name__ == "__main__":
