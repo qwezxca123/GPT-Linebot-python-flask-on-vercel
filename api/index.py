@@ -4,6 +4,8 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 
 import os
+from io import BytesIO
+from PIL import Image
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -39,15 +41,14 @@ def handle_message(event):
 @line_handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
     message_content = line_bot_api.get_message_content(event.message.id)
-    image = message_content.content
-    image_url = 'https://example.com/image.jpg'
-    preview_url = 'https://example.com/preview.jpg'
+    # 將 message_content 轉換為 bytes
+    image_binary = BytesIO(message_content.content)
+    # 解碼圖片
+    image = Image.open(image_binary)
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="收到圖片"),
             ImageSendMessage(image=image,
-                original_content_url=image_url,
-                preview_image_url=preview_url)
         ])
     
 if __name__ == "__main__":
