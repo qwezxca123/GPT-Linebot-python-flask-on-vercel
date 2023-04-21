@@ -45,10 +45,15 @@ def handle_image(event):
     image_binary = BytesIO(message_content.content)
     # 解碼圖片
     image = Image.open(image_binary)
+    image_url = "https://cdn2.ettoday.net/images/2904/2904577.jpg"
+    preview_image_url=image_url = "https://cdn2.ettoday.net/images/2904/2904577.jpg"
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="收到圖片"),
-            ImageSendMessage(image=image),
+            ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url
+            )
         ])
     
 if __name__ == "__main__":
