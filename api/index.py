@@ -39,9 +39,12 @@ def handle_message(event):
 
 @line_handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
+    message_content = line_bot_api.get_message_content(event.message.id)
+    image = message_content.content
     line_bot_api.reply_message(
         event.reply_token, [
-            TextSendMessage(text="收到"),
+            TextSendMessage(text="收到圖片"),
+            ImageSendMessage(image=image)
         ])
     
 if __name__ == "__main__":
