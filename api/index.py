@@ -44,7 +44,6 @@ def handle_image(event):
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text="收到圖片"),
-            ImageSendMessage(image=image),
             ImageSendMessage(
                 original_content_url=image_url,
                 preview_image_url=image_url
