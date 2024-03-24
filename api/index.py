@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
-
+from transformers import AutoTokenizer, AutoModelWithLMHead
 import os
 from io import BytesIO
 from PIL import Image
@@ -30,12 +30,28 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-    
+
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+model = AutoModelWithLMHead.from_pretrained("distilbert-base-uncased")
+
 @line_handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+def handle_text(event):
+    previous_sentence = event.message.text
+    inputs = tokenizer.encode(previous_sentence, return_tensors='pt')
+     
+    # Get prediction from model
+    outputs = model(inputs)[0]
+    
+    # Get predicted token ids and convert them into string
+    predicted_response = tokenizer.decode(outputs[0, -1, :].argmax())
+    
+    # Log the relationship for future training
+    with open("training_data.txt", "a") as f:
+        f.write(f"{previous_sentence}\t{predicted_response}\n")
+
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="請輸入一張圖片"))
+        TextSendMessage(text=predicted_response))
     return
 
 @line_handler.add(MessageEvent, message=ImageMessage)
