@@ -2,20 +2,16 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-import torch
 import os
-
+from io import BytesIO
+from PIL import Image
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
-
 app = Flask(__name__)
-
 # domain root
 @app.route('/')
 def home():
     return 'Hello, World!'
-
 @app.route("/webhook", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -30,23 +26,30 @@ def callback():
         abort(400)
     return 'OK'
     
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2LMHeadModel.from_pretrained("gpt2")
-
 @line_handler.add(MessageEvent, message=TextMessage)
-def handle_text(event):
-    previous_sentence = event.message.text
-    inputs = torch.tensor(tokenizer.encode(previous_sentence)).unsqueeze(0) 
-    outputs = model.generate(inputs, max_length=100, 
-                             do_sample=True, temperature=0.7,
-                             pad_token_id=tokenizer.eos_token_id)
-
-    predicted_response = tokenizer.decode(outputs[0, :], skip_special_tokens=True)
-
+def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=predicted_response))
+        TextSendMessage(text="請輸入一張圖片"))
     return
+@line_handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    message_content = line_bot_api.get_message_content(event.message.id)
+    # 將 message_content 轉換為 bytes
+    image_binary = BytesIO(message_content.content)
+    # 解碼圖片
+    image = Image.open(image_binary)
+    image_url = "https://cdn2.ettoday.net/images/2904/2904577.jpg"
+    preview_image_url=image_url = "https://cdn2.ettoday.net/images/2904/2904577.jpg"
+    line_bot_api.reply_message(
+        event.reply_token, [
+            TextSendMessage(text="收到圖片"),
+            ImageSendMessage(image=image),
+            ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url
+            )
+        ])
 
 if __name__ == "__main__":
     app.run()
